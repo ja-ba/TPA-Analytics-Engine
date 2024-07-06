@@ -1,0 +1,28 @@
+oci_config:
+  user: "ocid1.user.oc1..aaaaaaaabn5z4iq7l3j2vpohtwrew2vo46txvh6jxmppkm7l47j6rwqzjvnq"
+  fingerprint: "6b:29:11:28:b4:01:14:58:4d:5f:41:b9:de:92:43:54"
+  tenancy: "ocid1.tenancy.oc1..aaaaaaaavqyu7qyfu4ysj4g47phqalghd6vupj6gqckxcuf3cmxqe6dr2wpa"
+  region: "eu-frankfurt-1"
+  bucket_name: "my_test_bucket"
+  compartment_id: "jakobsdataprojects"
+  key_file: "test/example_key.pem"
+  direct_key: ""
+  env_key: ""
+
+data_config:
+  df_path: BASE_df_wide.ftr
+  df_format: ftr
+  date_column: Day_Hours
+
+forecast_config:
+  n_before: 20
+  use_estimator_class: sklearn
+  use_estimator: estimator1
+  estimators:
+    sklearn:
+      estimator1:
+        estimator_type: HistGradientBoostingRegressor
+        estimator_kwargs:
+          random_state: 1
+          min_samples_leaf: 7
+        exogenous_vars: ["avg_daily_price_lag1", "avg_daily_price_lag2", "avg_daily_price_lag3"]
