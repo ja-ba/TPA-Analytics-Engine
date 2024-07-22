@@ -47,11 +47,11 @@ def load_station_sorte(
         .dropna()
     )
 
-    # If add_pred is true, then add the times of the last date for todays date with a price of 0 --> this price will be predicted later
+    # If add_pred is true, then add the times of the same day last week with a price of 0 --> this price will be predicted later
     if add_pred:
-        last_date = df[data_config.date_column].max().date()
         current_date = datetime.date.today()
-        filtered_df = df[df[data_config.date_column].dt.date == last_date].copy()
+        date_7_days_ago = current_date - datetime.timedelta(days=7)
+        filtered_df = df[df[data_config.date_column].dt.date == date_7_days_ago].copy()
         filtered_df[data_config.date_column] = filtered_df[
             data_config.date_column
         ].apply(
@@ -89,6 +89,7 @@ def add_columns(df: pd.DataFrame) -> pd.DataFrame:
     df["Day"] = df["Day_Hours"].dt.date
     df["trend"] = df["Day"].apply(lambda x: x.toordinal())
     df["trend"] = df["trend"] - df["trend"].min()
+    df["week"] = df["Day_Hours"].astype("datetime64[ns]").dt.strftime("%Y-%W")
 
     # Calculate the average prices of the 3 days before
     avg_daily_price = df.groupby("Day")[["price"]].mean().reset_index()

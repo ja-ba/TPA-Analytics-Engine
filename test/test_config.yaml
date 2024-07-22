@@ -25,4 +25,4 @@ forecast_config:
         estimator_kwargs:
           random_state: 1
           min_samples_leaf: 7
-        exogenous_vars: ["avg_daily_price_lag1", "avg_daily_price_lag2", "avg_daily_price_lag3"]
+        exogenous_vars: ["avg_daily_price_lag1", "avg_daily_price_lag2", "avg_daily_price_lag3", "trend", "day_of_week", "hour"]

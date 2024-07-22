@@ -1,5 +1,3 @@
-from typing import Literal
-
 import pandas as pd
 from cloud_storage_wrapper.oci_access.pandas import PandasOCI
 from tpa_analytics_engine.data_handler.prepare_forecast_format import add_columns
@@ -42,7 +40,7 @@ class Forecast:
                 data_config=self.data_config,
                 station=station,
                 sorte=sorte,
-                add_pred=False,
+                add_pred=True,
             )
         )
 
@@ -63,13 +61,12 @@ class Forecast:
             )
         return run(df=currentDF, forecast_config=self.forecast_config)
 
-    def create_summaries(
-        self, groupCol: Literal["day_of_week", "hour", "trend"]
-    ) -> pd.Series:
+    def create_summaries(self, groupCol: str, centralize_mean: bool) -> pd.Series:
         """Summarises the "price" column by groupCol.
 
         Args:
             groupCol (Literal['day_of_week', 'hour', 'trend']): The time column by which to group by.
+            centralize_mean (bool): If True, centralizes the mean of the summary.
 
         Raises:
             ValueError: If self.df is empty, i.e. no df was loaded.
@@ -79,7 +76,17 @@ class Forecast:
         """
         if len(self.df) == 0:
             raise ValueError("No df is loaded in the object.")
+        elif len(self.df.query("is_last==0")) == 0:
+            raise ValueError("df contains no dates before today.")
+        elif groupCol not in self.df:
+            raise ValueError(f"groupCol {groupCol} is not in the df.")
+
+        # Create the summary
+        summary_df = summarize(
+            df=self.df.query("is_last==0"), groupCol=groupCol, aggCol="price"
+        )
+        # Mean-centralize the summary if necessary
+        if centralize_mean:
+            return mean_centralize(summary_df)
         else:
-            return mean_centralize(
-                summarize(df=self.df, groupCol=groupCol, aggCol="price")
-            )
+            return summary_df

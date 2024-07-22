@@ -23,13 +23,26 @@ def test_create_forecast(provide_Forecast_object):
 
 def test_create_summaries(provide_Forecast_object):
     with pytest.raises(ValueError):
-        provide_Forecast_object.create_forecast()
+        provide_Forecast_object.create_summaries(
+            groupCol="day_of_week", centralize_mean=True
+        )
 
     provide_Forecast_object.load_df(sorte="diesel", station="9771")
 
-    summary_day = provide_Forecast_object.create_summaries(groupCol="day_of_week")
-    summary_hour = provide_Forecast_object.create_summaries(groupCol="hour")
-    summary_trend = provide_Forecast_object.create_summaries(groupCol="trend")
+    with pytest.raises(ValueError):
+        provide_Forecast_object.create_summaries(
+            groupCol="invalid_col", centralize_mean=True
+        )
+
+    summary_day = provide_Forecast_object.create_summaries(
+        groupCol="day_of_week", centralize_mean=True
+    )
+    summary_hour = provide_Forecast_object.create_summaries(
+        groupCol="hour", centralize_mean=True
+    )
+    summary_week = provide_Forecast_object.create_summaries(
+        groupCol="week", centralize_mean=False
+    )
 
     assert len(summary_day) >= 5
     assert len(summary_day) == len(provide_Forecast_object.df["day_of_week"].unique())
@@ -37,5 +50,5 @@ def test_create_summaries(provide_Forecast_object):
     assert len(summary_hour) >= 12
     assert len(summary_hour) == len(provide_Forecast_object.df["hour"].unique())
     assert abs(summary_hour.mean()) < 1
-    assert len(summary_trend) == len(provide_Forecast_object.df["trend"].unique())
-    assert abs(summary_trend.mean()) < 1
+    assert len(summary_week) == len(provide_Forecast_object.df["week"].unique())
+    assert summary_week.mean() > 1

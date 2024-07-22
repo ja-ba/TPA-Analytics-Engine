@@ -13,6 +13,7 @@ def test_add_columns(provide_data_frame):
         "hour_format",
         "Day",
         "trend",
+        "week",
         "avg_daily_price_lag1",
         "avg_daily_price_lag2",
         "avg_daily_price_lag3",

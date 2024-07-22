@@ -1,6 +1,6 @@
 [project]
 name = "tpa-analytics-engine"
-version = "0.0.1"
+version = "0.0.2"
 license = {file = "LICENSE"}
 authors = [
   {email = "jakobs.dataprojects@gmail.com"},
